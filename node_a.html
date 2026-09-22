@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>iTantra - Node A: Field Transceiver Console</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #020408;
+            --panel-bg: rgba(10, 15, 25, 0.85);
+            --panel-border: rgba(0, 255, 102, 0.25);
+            --accent-green: #00ff66;
+            --accent-green-glow: rgba(0, 255, 102, 0.4);
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+        }
+        body { 
+            background-color: var(--bg-color); color: var(--text-main); font-family: 'Inter', sans-serif; 
+            padding: 40px 20px; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-y: auto; box-sizing: border-box;
+            background-image: radial-gradient(circle at 50% 0%, #0c203a 0%, var(--bg-color) 70%), linear-gradient(rgba(0, 255, 102, 0.02) 1px, transparent 1px);
+            background-size: 100% 100%, 40px 40px;
+        }
+        .console-container { width: 100%; max-width: 800px; display: flex; flex-direction: column; gap: 20px; }
+        .panel { background: var(--panel-bg); border: 1px solid var(--panel-border); padding: 30px; border-radius: 16px; box-shadow: 0 20px 50px rgba(0,0,0,0.8); backdrop-filter: blur(15px); }
+        .header-flex { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 15px; margin-bottom: 20px; }
+        h2 { font-family: 'JetBrains Mono', monospace; color: var(--accent-green); margin: 0; font-size: 18px; text-shadow: 0 0 10px var(--accent-green-glow); }
+        .badge { font-family: 'JetBrains Mono', monospace; font-size: 11px; background: rgba(0, 255, 102, 0.1); border: 1px solid rgba(0, 255, 102, 0.4); padding: 5px 12px; border-radius: 20px; color: var(--accent-green); }
+        .info-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+        .info-box { background: #020407; border: 1px solid rgba(255,255,255,0.08); padding: 10px 14px; border-radius: 8px; font-family: 'JetBrains Mono', monospace; }
+        .info-box span { font-size: 10px; color: var(--text-muted); display: block; text-transform: uppercase; }
+        .info-box b { font-size: 13px; color: var(--accent-green); }
+        label { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 6px; }
+        select, input, textarea { width: 100%; background: #020407; color: var(--accent-green); border: 1px solid rgba(255,255,255,0.1); padding: 12px 16px; border-radius: 10px; font-family: 'JetBrains Mono', monospace; font-size: 13px; box-sizing: border-box; margin-bottom: 15px; }
+        input[type="range"] { accent-color: var(--accent-green); cursor: pointer; padding: 0; }
+        button { width: 100%; border: none; padding: 13px; font-weight: 600; cursor: pointer; border-radius: 10px; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 15px; font-family: 'Inter', sans-serif; transition: all 0.2s; }
+        .btn-red { background: #ef4444; color: #fff; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3); }
+        .btn-green { background: var(--accent-green); color: #030508; box-shadow: 0 4px 15px rgba(0, 255, 102, 0.3); }
+        .metrics-card { background: #020407; border: 1px solid rgba(0, 255, 102, 0.3); padding: 14px; border-radius: 10px; font-family: 'JetBrains Mono', monospace; font-size: 12px; margin-bottom: 15px; }
+        .metrics-card p { margin: 4px 0; color: var(--text-muted); }
+        .metrics-card b { color: var(--accent-green); }
+        .log-box { background: #020407; border: 1px solid rgba(255,255,255,0.08); padding: 12px; border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-muted); max-height: 120px; overflow-y: auto; }
+        .pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-green); box-shadow: 0 0 10px var(--accent-green); animation: pulse 1.5s infinite; display: inline-block; }
+        @keyframes pulse { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 255, 102, 0.8); } 70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(0, 255, 102, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 255, 102, 0); } }
+    </style>
+</head>
+<body>
+    <div class="console-container">
+        <div class="panel" style="padding: 20px 30px;">
+            <div class="header-flex" style="margin:0; border:none; padding:0;">
+                <div>
+                    <h2 style="font-size: 15px; color: var(--text-main);">ISRO SIH26173: iTantra Neural Transceiver</h2>
+                    <p style="margin: 4px 0 0 0; font-size: 12px; color: var(--text-muted);">Tactical Ultra-Low Bitrate Voice-to-Text & TTS Pipeline</p>
+                </div>
+                <div class="badge"><span class="pulse"></span> NODE A ACTIVE</div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h2><span>📡 Field Transmitter Outpost</span></h2>
+            
+            <div class="info-grid">
+                <div class="info-box"><span>Codec Mode</span><b>Neural LPC v2</b></div>
+                <div class="info-box"><span>Channel Bitrate</span><b>50 bps</b></div>
+                <div class="info-box"><span>Encryption</span><b>AES-256 / QKD</b></div>
+            </div>
+
+            <label>Node A Transmission Frequency: <span id="freq-display" style="color:var(--accent-green); font-weight:bold;">1420.0</span> MHz</label>
+            <input type="range" id="freq-slider" min="1400.0" max="1450.0" step="0.5" value="1420.0" oninput="updateFrequency(this.value)">
+
+            <label style="margin-top: 15px;">Operation Language Profile</label>
+            <select id="lang-selector">
+                <option value="hi-IN">🇮🇳 Hindi (हिन्दी)</option>
+                <option value="ta-IN">🇮🇳 Tamil (தமிழ்)</option>
+                <option value="te-IN">🇮🇳 Telugu (తెలుగు)</option>
+                <option value="mr-IN">🇮🇳 Marathi (मराठी)</option>
+                <option value="en-IN" selected>🇬🇧 English (India)</option>
+            </select>
+
+            <label>Field Voice Feed (STT)</label>
+            <button class="btn-red" onclick="startListening()">🎙️ Record Field Voice via Web Speech API</button>
+            <div id="mic-status" style="font-size: 11.5px; font-family: 'JetBrains Mono'; color: #fbbf24; margin-bottom: 12px;"></div>
+
+            <label>Tokenized Text Payload</label>
+            <input type="text" id="msg-input" placeholder="Type or speak tactical message...">
+
+            <button class="btn-green" onclick="transmitData()">🚀 Compress & Transmit over Low-Bitrate Channel</button>
+            
+            <div id="tx-metrics"></div>
+
+            <label style="color: #60a5fa; margin-top: 15px;">📥 Incoming Command Center Reply</label>
+            <textarea id="field-incoming-reply" rows="2" disabled style="color: #60a5fa; border-color: rgba(59,130,246,0.3);">Awaiting base instructions...</textarea>
+            <div id="audio-status" style="font-size: 11.5px; font-family: 'JetBrains Mono'; color: #60a5fa; margin-bottom: 15px;"></div>
+
+            <label>📜 Live Transmission & Telemetry Log</label>
+            <div id="packet-log" class="log-box">
+                [00:00:01] System initialized. Independent frequency mode.<br>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function logMessage(text) {
+            const logBox = document.getElementById('packet-log');
+            const time = new Date().toLocaleTimeString();
+            logBox.innerHTML += `<br>[${time}] ${text}`;
+            logBox.scrollTop = logBox.scrollHeight;
+        }
+
+        function updateFrequency(val) {
+            document.getElementById('freq-display').innerText = val;
+            fetch('/api/set-freq-a', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ frequency: val })
+            });
+        }
+
+        setInterval(() => {
+            fetch('/api/poll-base')
+            .then(res => res.json())
+            .then(data => {
+                const replyArea = document.getElementById('field-incoming-reply');
+                if(data.status === "out_of_tune") {
+                    replyArea.value = "Awaiting base instructions...";
+                } else {
+                    const currentReply = replyArea.value;
+                    if(data.text !== "Awaiting base instructions..." && data.text !== currentReply) {
+                        replyArea.value = data.text;
+                        logMessage(`Received reply from base: "${data.text}"`);
+                        playTTS(data.text);
+                    }
+                }
+            });
+        }, 2000);
+
+        function startListening() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) { alert("Use Google Chrome."); return; }
+            const recognition = new SpeechRecognition();
+            recognition.lang = document.getElementById('lang-selector').value;
+            recognition.interimResults = false;
+            document.getElementById('mic-status').innerText = "🔴 Listening...";
+            recognition.onresult = (e) => {
+                document.getElementById('msg-input').value = e.results[0][0].transcript;
+                document.getElementById('mic-status').innerText = "✅ Speech tokenized.";
+            };
+            recognition.start();
+        }
+
+        function transmitData() {
+            const message = document.getElementById('msg-input').value;
+            const currentFreq = document.getElementById('freq-display').innerText;
+            if (!message) { alert("Enter message first!"); return; }
+            logMessage(`Broadcasting payload on ${currentFreq} MHz: "${message}"`);
+            fetch('/api/transmit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text: message, freq: currentFreq })
+            })
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('tx-metrics').innerHTML = `
+                    <div class="metrics-card">
+                        <p>Frequency Tuned: <b>${currentFreq} MHz</b> | Token Size: <b>${data.compressed_size}</b></p>
+                    </div>
+                `;
+                logMessage(`Packet successfully beamed out on ${currentFreq} MHz.`);
+            });
+        }
+
+        function playTTS(text) {
+            const synth = window.speechSynthesis;
+            synth.cancel();
+            const utter = new SpeechSynthesisUtterance(text);
+            utter.lang = document.getElementById('lang-selector').value;
+            document.getElementById('audio-status').innerText = "🔊 Synthesizing incoming voice note via neural TTS...";
+            synth.speak(utter);
+            utter.onend = () => { document.getElementById('audio-status').innerText = "✅ Playback complete."; };
+            utter.onerror = (event) => { console.error('TTS Error:', event.error); };
+        }
+    </script>
+</body>
+</html>

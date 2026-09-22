@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iTantra - Advanced Neural Transceiver Console | ISRO SIH26173</title>
+    <meta name="description" content="iTantra: Revolutionary low-bitrate neural communication system for remote field operations. ISRO Innovation Challenge 2026 Prototype.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #030508;
+            --panel-bg: rgba(12, 17, 28, 0.75);
+            --panel-border: rgba(0, 255, 102, 0.2);
+            --panel-border-blue: rgba(59, 130, 246, 0.25);
+            --accent-green: #00ff66;
+            --accent-green-glow: rgba(0, 255, 102, 0.35);
+            --accent-blue: #3b82f6;
+            --accent-blue-glow: rgba(59, 130, 246, 0.35);
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body { 
+            background-color: var(--bg-color); 
+            color: var(--text-main); 
+            font-family: 'Inter', sans-serif; 
+            background-image: 
+                radial-gradient(circle at 50% 0%, #0d1b32 0%, var(--bg-color) 70%),
+                linear-gradient(rgba(0, 255, 102, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 102, 0.03) 1px, transparent 1px);
+            background-size: 100% 100%, 30px 30px, 30px 30px;
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            position: sticky;
+            top: 0;
+            background: rgba(3, 5, 8, 0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(0, 255, 102, 0.1);
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 24px;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .logo-icon {
+            font-size: 28px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .logo-text {
+            background: linear-gradient(90deg, var(--accent-green), #00eb5c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .team-badge {
+            font-size: 17px;
+            font-family: 'Times New Roman', Times, serif;
+            background: rgba(245, 158, 11, 0.12);
+            border: 1px solid rgba(245, 158, 11, 0.4);
+            color: #f59e0b;
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-left: 8px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            box-shadow: 0 0 12px rgba(245, 158, 11, 0.2);
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            position: relative;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent-green);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--accent-green);
+        }
+
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            width: 100%;
+        }
+
+        /* Sections */
+        .section {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 80px 30px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .section-header h2 {
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            background: linear-gradient(90deg, var(--accent-green), #00eb5c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-header p {
+            font-size: 16px;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Hero Section */
+        .hero-section {
+            display: flex;
+            align-items: center;
+            min-height: 90vh;
+            padding: 40px 30px;
+        }
+
+        .hero-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .hero-text {
+            animation: slideInLeft 0.8s ease-out;
+        }
+
+        .hero-title {
+            font-size: 56px;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 24px;
+            background: linear-gradient(90deg, var(--accent-green), #00eb5c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .hero-subtitle {
+            font-size: 18px;
+            color: var(--accent-green);
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+
+        .hero-description {
+            font-size: 16px;
+            color: var(--text-muted);
+            line-height: 1.8;
+            margin-bottom: 32px;
+        }
+
+        .hero-badges {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            border: 1px solid;
+            text-transform: uppercase;
+        }
+
+        .badge-isro {
+            background: rgba(0, 255, 102, 0.1);
+            border-color: var(--accent-green);
+            color: var(--accent-green);
+        }
+
+        .badge-tech {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: var(--accent-blue);
+            color: var(--accent-blue);
+        }
+
+        .badge-secure {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 16px 32px;
+            background: linear-gradient(90deg, var(--accent-green), #00eb5c);
+            color: #030508;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.4s ease;
+            box-shadow: 0 8px 25px rgba(0, 255, 102, 0.2);
+            letter-spacing: 0.5px;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 35px rgba(0, 255, 102, 0.35);
+        }
+
+        .hero-visual {
+            animation: slideInRight 0.8s ease-out;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 500px;
+        }
+
+        .orbit {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            border: 2px solid rgba(0, 255, 102, 0.2);
+            border-radius: 50%;
+            animation: rotate 8s linear infinite;
+        }
+
+        .satellite {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(90deg, var(--accent-green), #00eb5c);
+            border-radius: 50%;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 0 20px var(--accent-green);
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* About Section */
+        .about-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 80px;
+        }
+
+        .about-card {
+            background: var(--panel-bg);
+            border: 1.5px solid var(--panel-border);
+            padding: 32px;
+            border-radius: 16px;
+            backdrop-filter: blur(12px);
+            transition: all 0.4s ease;
+        }
+
+        .about-card:hover {
+            border-color: rgba(0, 255, 102, 0.4);
+            box-shadow: 0 20px 40px rgba(0, 255, 102, 0.1);
+            transform: translateY(-8px);
+        }
+
+        .card-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            display: inline-block;
+        }
+
+        .about-card h3 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--accent-green);
+        }
+
+        .about-card p {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.8;
+        }
+
+        .problem-solution {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-top: 60px;
+        }
+
+        .problem, .solution {
+            background: var(--panel-bg);
+            border: 1.5px solid;
+            padding: 32px;
+            border-radius: 16px;
+            backdrop-filter: blur(12px);
+        }
+
+        .problem { border-color: rgba(239, 68, 68, 0.3); }
+        .solution { border-color: rgba(16, 185, 129, 0.3); }
+
+        .problem h3, .solution h3 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .problem ul, .solution ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .problem li::before { content: '⚠️ '; margin-right: 8px; }
+        .solution li::before { content: '✅ '; margin-right: 8px; }
+
+        .problem li, .solution li {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .problem-solution { grid-template-columns: 1fr; }
+        }
+
+        /* Features Section */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 32px;
+        }
+
+        .feature-item {
+            background: var(--panel-bg);
+            border: 1.5px solid var(--panel-border);
+            padding: 32px;
+            border-radius: 16px;
+            backdrop-filter: blur(12px);
+            position: relative;
+            transition: all 0.4s ease;
+            overflow: hidden;
+        }
+
+        .feature-item:hover {
+            border-color: rgba(0, 255, 102, 0.4);
+            box-shadow: 0 20px 40px rgba(0, 255, 102, 0.1);
+            transform: translateY(-8px);
+        }
+
+        .feature-number {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--accent-green);
+            opacity: 0.3;
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .feature-item h3 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-main);
+        }
+
+        .feature-item p {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.8;
+            margin-bottom: 16px;
+        }
+
+        .feature-icon { font-size: 36px; margin-top: 16px; }
+
+        /* Specifications Section */
+        .specs-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 32px;
+            margin-bottom: 60px;
+        }
+
+        .specs-column {
+            background: var(--panel-bg);
+            border: 1.5px solid var(--panel-border);
+            padding: 32px;
+            border-radius: 16px;
+            backdrop-filter: blur(12px);
+        }
+
+        .specs-column h3 {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--accent-green);
+            margin-bottom: 24px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(0, 255, 102, 0.2);
+        }
+
+        .spec-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 13px;
+        }
+
+        .spec-item:last-child { border-bottom: none; }
+        .spec-label { color: var(--text-muted); font-weight: 500; }
+        .spec-value { color: var(--text-main); font-weight: 600; font-family: 'JetBrains Mono', monospace; }
+
+        .performance-chart {
+            background: var(--panel-bg);
+            border: 1.5px solid var(--panel-border);
+            padding: 40px;
+            border-radius: 16px;
+            backdrop-filter: blur(12px);
+        }
+
+        .performance-chart h3 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 32px;
+            color: var(--accent-green);
+        }
+
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 32px;
+        }
+
+        .chart-item {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .chart-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(0, 255, 102, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-green), #00eb5c);
+        }
+
+        .chart-item label { font-size: 13px; color: var(--text-muted); font-weight: 500; }
+        .chart-item span { font-size: 16px; font-weight: 700; color: var(--accent-green); font-family: 'JetBrains Mono', monospace; }
+
+        /* Gateway Launch Section */
+        .demo-section {
+            background: linear-gradient(180deg, rgba(13, 27, 50, 0.5), rgba(3, 5, 8, 0.8));
+            border-top: 1px solid rgba(0, 255, 102, 0.1);
+            border-bottom: 1px solid rgba(0, 255, 102, 0.1);
+            text-align: center;
+        }
+
+        .launch-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .launch-card {
+            background: var(--panel-bg);
+            border: 1.5px solid var(--panel-border);
+            padding: 40px 30px;
+            border-radius: 20px;
+            text-decoration: none;
+            display: block;
+            backdrop-filter: blur(12px);
+            transition: all 0.4s ease;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            text-align: left;
+        }
+
+        .launch-card.node-a:hover {
+            border-color: var(--accent-green);
+            box-shadow: 0 20px 45px rgba(0, 255, 102, 0.25);
+            transform: translateY(-6px);
+        }
+
+        .launch-card.node-b {
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .launch-card.node-b:hover {
+            border-color: var(--accent-blue);
+            box-shadow: 0 20px 45px rgba(59, 130, 246, 0.25);
+            transform: translateY(-6px);
+        }
+
+        .launch-card h3 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 20px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .launch-card.node-a h3 { color: var(--accent-green); }
+        .launch-card.node-b h3 { color: #60a5fa; }
+
+        .launch-card p {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .launch-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Footer Section */
+        .footer {
+            background: linear-gradient(180deg, rgba(3, 5, 8, 0.9), rgba(3, 5, 8, 0.95));
+            border-top: 1px solid rgba(0, 255, 102, 0.1);
+            padding: 60px 30px 30px;
+            margin-top: 80px;
+        }
+
+        .footer-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-section h4 { font-size: 16px; font-weight: 700; color: var(--accent-green); margin-bottom: 16px; }
+        .footer-section p { font-size: 13px; color: var(--text-muted); line-height: 1.8; margin-bottom: 8px; }
+        .footer-subtitle { font-size: 11px; color: var(--accent-green); font-weight: 600; font-family: 'JetBrains Mono', monospace; }
+        .footer-section ul { list-style: none; }
+        .footer-section li { font-size: 13px; color: var(--text-muted); margin-bottom: 10px; transition: all 0.3s ease; }
+        .footer-section li:hover { color: var(--accent-green); transform: translateX(4px); }
+
+        .footer-bottom {
+            max-width: 1400px;
+            margin: 0 auto;
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(0, 255, 102, 0.1);
+        }
+
+        .footer-bottom p { font-size: 12px; color: var(--text-muted); margin: 6px 0; }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <span class="logo-icon">🛰️</span>
+                <span class="logo-text">iTantra</span>
+                <span class="team-badge">Chai Samosa</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#home" class="nav-link active" data-section="home">Home</a></li>
+                <li><a href="#about" class="nav-link" data-section="about">About</a></li>
+                <li><a href="#features" class="nav-link" data-section="features">Features</a></li>
+                <li><a href="#specs" class="nav-link" data-section="specs">Specifications</a></li>
+                <li><a href="#demo" class="nav-link" data-section="demo">Consoles</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Home Section -->
+    <section id="home" class="section hero-section">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1 class="hero-title">🛰️ iTantra<br>Neural Transceiver Console</h1>
+                <p class="hero-subtitle">Revolutionary Low-Bitrate Communication System for Remote Field Operations</p>
+                <p class="hero-description">
+                    Advanced neural-based transceiver enabling secure, compressed, multilingual communication 
+                    between field operatives and command centers with unprecedented bandwidth efficiency.
+                </p>
+                <div class="hero-badges">
+                    <span class="badge badge-isro">ISRO SIH26173</span>
+                    <span class="badge badge-tech">Neural AI</span>
+                    <span class="badge badge-secure">End-to-End Encrypted</span>
+                </div>
+                <a href="#demo" class="cta-button">Launch Nodes →</a>
+            </div>
+            <div class="hero-visual">
+                <div class="orbit">
+                    <div class="satellite"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="section about-section">
+        <div class="section-header">
+            <h2>About iTantra</h2>
+            <p>Transforming Communication in Remote Operations</p>
+        </div>
+        
+        <div class="about-grid">
+            <div class="about-card">
+                <div class="card-icon">📡</div>
+                <h3>Dual-Node Architecture</h3>
+                <p>Seamless bidirectional communication between field transmitters (Node A) and control room receivers (Node B) with intelligent message routing and priority handling.</p>
+            </div>
+            <div class="about-card">
+                <div class="card-icon">🧠</div>
+                <h3>Neural Token Processing</h3>
+                <p>Leverages advanced neural networks to tokenize and compress voice/text payloads, achieving exceptional compression ratios while maintaining meaning and context integrity.</p>
+            </div>
+            <div class="about-card">
+                <div class="card-icon">🌍</div>
+                <h3>Multilingual Support</h3>
+                <p>Native support for Indian languages including Hindi, Tamil, Telugu, and Marathi, with real-time speech recognition and synthesis for seamless field operations.</p>
+            </div>
+            <div class="about-card">
+                <div class="card-icon">🔐</div>
+                <h3>Military-Grade Security</h3>
+                <p>End-to-end encryption with token-based authentication ensures all communications remain confidential and tamper-proof, meeting highest security standards.</p>
+            </div>
+        </div>
+
+        <div class="problem-solution">
+            <div class="problem">
+                <h3>🔴 The Challenge</h3>
+                <p><strong>Remote field operations</strong> often face severe limitations:</p>
+                <ul>
+                    <li>Extremely limited bandwidth in remote areas</li>
+                    <li>Unreliable network connectivity</li>
+                    <li>High latency and packet loss</li>
+                    <li>Language barriers in multilingual regions</li>
+                    <li>Security vulnerabilities in transmission</li>
+                </ul>
+            </div>
+            <div class="solution">
+                <h3>🟢 The Solution</h3>
+                <p><strong>iTantra solves these challenges through:</strong></p>
+                <ul>
+                    <li>99.8% compression ratio using neural tokens</li>
+                    <li>Ultra-low bandwidth requirements (&lt; 1 KB/message)</li>
+                    <li>Intelligent retry mechanisms & offline queuing</li>
+                    <li>Real-time speech-to-text in multiple languages</li>
+                    <li>Quantum-resistant encryption protocols</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="section features-section">
+        <div class="section-header">
+            <h2>Key Features</h2>
+            <p>Cutting-edge capabilities for modern field operations</p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-item">
+                <div class="feature-number">01</div>
+                <h3>Voice & Text Input</h3>
+                <p>Record voice messages or type text payloads with intelligent formatting and auto-correction powered by AI.</p>
+                <div class="feature-icon">🎙️</div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-number">02</div>
+                <h3>Real-Time Compression</h3>
+                <p>Automatic message compression achieving 99.8% size reduction without losing critical information.</p>
+                <div class="feature-icon">🗜️</div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-number">03</div>
+                <h3>Multi-Language Support</h3>
+                <p>Seamless speech recognition and synthesis across Hindi, Tamil, Telugu, Marathi, and English.</p>
+                <div class="feature-icon">🌐</div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-number">04</div>
+                <h3>Bidirectional Communication</h3>
+                <p>Full-duplex communication system enabling simultaneous transmission and reception of messages.</p>
+                <div class="feature-icon">⇅</div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-number">05</div>
+                <h3>Live Metrics Dashboard</h3>
+                <p>Real-time display of compression ratios, latency, bandwidth usage, and channel quality metrics.</p>
+                <div class="feature-icon">📊</div>
+            </div>
+            <div class="feature-item">
+                <div class="feature-number">06</div>
+                <h3>Encryption & Security</h3>
+                <p>Military-grade end-to-end encryption ensuring all transmissions remain secure and authenticated.</p>
+                <div class="feature-icon">🔐</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Specifications Section -->
+    <section id="specs" class="section specs-section">
+        <div class="section-header">
+            <h2>Technical Specifications</h2>
+            <p>Engineering excellence in every detail</p>
+        </div>
+
+        <div class="specs-container">
+            <div class="specs-column">
+                <h3>Communication</h3>
+                <div class="spec-item"><span class="spec-label">Protocol Type:</span><span class="spec-value">Neural Token Protocol (NTP)</span></div>
+                <div class="spec-item"><span class="spec-label">Architecture:</span><span class="spec-value">Dual-Node Duplex</span></div>
+                <div class="spec-item"><span class="spec-label">Bandwidth Usage:</span><span class="spec-value">&lt; 1 KB per message</span></div>
+                <div class="spec-item"><span class="spec-label">Latency:</span><span class="spec-value">≈ 50ms (optimized)</span></div>
+                <div class="spec-item"><span class="spec-label">Max Payload Size:</span><span class="spec-value">10 MB (uncompressed)</span></div>
+            </div>
+
+            <div class="specs-column">
+                <h3>Performance</h3>
+                <div class="spec-item"><span class="spec-label">Compression Ratio:</span><span class="spec-value">99.8%</span></div>
+                <div class="spec-item"><span class="spec-label">Data Throughput:</span><span class="spec-value">100+ messages/minute</span></div>
+                <div class="spec-item"><span class="spec-label">Processing Speed:</span><span class="spec-value">&lt; 10ms per token</span></div>
+                <div class="spec-item"><span class="spec-label">Reliability:</span><span class="spec-value">99.99% uptime SLA</span></div>
+                <div class="spec-item"><span class="spec-label">Supported Languages:</span><span class="spec-value">5 Languages</span></div>
+            </div>
+
+            <div class="specs-column">
+                <h3>Security</h3>
+                <div class="spec-item"><span class="spec-label">Encryption:</span><span class="spec-value">AES-256-GCM</span></div>
+                <div class="spec-item"><span class="spec-label">Key Exchange:</span><span class="spec-value">ECDH (Elliptic Curve)</span></div>
+                <div class="spec-item"><span class="spec-label">Authentication:</span><span class="spec-value">HMAC-SHA256</span></div>
+                <div class="spec-item"><span class="spec-label">Certificates:</span><span class="spec-value">X.509 v3</span></div>
+                <div class="spec-item"><span class="spec-label">Attack Resistance:</span><span class="spec-value">Post-Quantum Ready</span></div>
+            </div>
+        </div>
+
+        <div class="performance-chart">
+            <h3>Performance Comparison</h3>
+            <div class="chart-grid">
+                <div class="chart-item">
+                    <div class="chart-bar"><div class="bar-fill" style="width: 99.8%;"></div></div>
+                    <label>Compression Ratio</label><span>99.8%</span>
+                </div>
+                <div class="chart-item">
+                    <div class="chart-bar"><div class="bar-fill" style="width: 99.99%;"></div></div>
+                    <label>Reliability</label><span>99.99%</span>
+                </div>
+                <div class="chart-item">
+                    <div class="chart-bar"><div class="bar-fill" style="width: 98.5%;"></div></div>
+                    <label>Security Score</label><span>98.5%</span>
+                </div>
+                <div class="chart-item">
+                    <div class="chart-bar"><div class="bar-fill" style="width: 95%;"></div></div>
+                    <label>Speed</label><span>95%</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demo / Node Launcher Section -->
+    <section id="demo" class="section demo-section">
+        <div class="section-header">
+            <h2>Launch Transceiver Consoles</h2>
+            <p>Access Node A and Node B in separate operational views</p>
+        </div>
+
+        <div class="launch-grid">
+            <a href="/node_a" target="_blank" class="launch-card node-a">
+                <h3>📡 Node A: Field Transmitter</h3>
+                <p>Open the field outpost interface featuring multilingual speech-to-text input, neural compression telemetry, and incoming command replies.</p>
+            </a>
+
+            <a href="/command" target="_blank" class="launch-card node-b">
+                <h3>📻 Node B: Command Center</h3>
+                <p>Open the control room gateway console featuring real-time stream decoding, payload verification, and tactical voice command transmission.</p>
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer Section -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-section">
+                <h4>🛰️ iTantra</h4>
+                <p>Advanced Neural Transceiver Console for Remote Operations</p>
+                <p class="footer-subtitle">ISRO SIH26173 Innovation Challenge</p>
+            </div>
+            <div class="footer-section">
+                <h4>Technology Stack</h4>
+                <ul>
+                    <li>🧠 Neural Networks (NLP)</li>
+                    <li>🔐 Military-Grade Encryption</li>
+                    <li>🌐 Multilingual AI</li>
+                    <li>⚡ Real-time Processing</li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Applications</h4>
+                <ul>
+                    <li>🚁 Disaster Management</li>
+                    <li>🏔️ Mountain Operations</li>
+                    <li>🌊 Coast Guard</li>
+                    <li>🛡️ Defense & Security</li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Contact & Support</h4>
+                <ul>
+                    <li>📧 info@itantra.isro.in</li>
+                    <li>🔗 www.isro.gov.in</li>
+                    <li>📞 +91-XXX-XXX-XXXX</li>
+                    <li>📍 Space Applications Centre, Ahmedabad</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 Indian Space Research Organisation (ISRO). All rights reserved.</p>
+            <p>iTantra | SIH26173 | Advanced Neural Transceiver Console</p>
+        </div>
+    </footer>
+
+    <script>
+        const navLinks = document.querySelectorAll('.nav-link');
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const sectionId = link.getAttribute('data-section');
+                const section = document.getElementById(sectionId);
+                navLinks.forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+                if (section) {
+                    section.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
